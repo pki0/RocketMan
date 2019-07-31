@@ -488,13 +488,16 @@ def checkAndSend(bot, chat_id, pokemon_db_data):
             delta = disappear_time - datetime.utcnow()
             deltaStr = '%02dm:%02ds' % (int(delta.seconds / 60), int(delta.seconds % 60))
             disappear_time_str = disappear_time.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%H:%M:%S")
-
+            grunt_type = pokestops.getGruntType()
+            if grunt_type is None:
+                grunt_type = 0
+            grunt_forms = {0:"Unbekannt", 1:"Blance", 2:"Candela", 3:"Spark", 4:"Zufall", 5:"Zufall", 6:"Käfer", 7:"Käfer", 8:"Geist", 9:"Geist", 10:"Unlicht", 11:"Unlicht", 12:"Drache", 13:"Drache", 14:"Fee", 15:"Fee", 16:"Kampf", 17:"Kampf", 18:"Feuer", 19:"Feuer", 20:"Flug", 21:"Flug", 22:"Pflanze", 23:"Pflanze", 24:"Boden", 25:"Boden", 26:"Eis", 27:"Eis", 28:"Stahl", 29:"Stahl", 30:"Normal", 31:"Normal", 32:"Gift", 33:"Gift", 34:"Psycho", 35:"Psycho", 36:"Gestein", 37:"Gestein", 38:"Wasser", 39:"Wasser", 40:"Giovanni"}
 
             if user_send_venue == 1:
-                pstname = "%s" % (pokestop_name)
+                pstname = "%s - *Typ: %s*" % (pokestop_name, grunt_forms[int(grunt_type)])
                 address = "Bis %s (%s)" % (disappear_time_str, deltaStr)
             else:
-                pstname = "%s" % (pokestop_name)
+                pstname = "%s - *Typ: %s*" % (pokestop_name, grunt_forms[int(grunt_type)])
                 address = "Bis %s (%s)" % (disappear_time_str, deltaStr)
 
 

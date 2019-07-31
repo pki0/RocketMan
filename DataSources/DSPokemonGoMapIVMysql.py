@@ -25,7 +25,7 @@ class DSPokemonGoMapIVMysql():
 	def getPokemonData(self):
 		pokelist = []
 
-		sqlquery = "SELECT pokestop_id, name, incident_expiration, latitude, longitude"
+		sqlquery = "SELECT pokestop_id, name, incident_expiration, latitude, longitude, incident_grunt_type"
 		sqlquery += ' FROM pokestop'
 		sqlquery += ' WHERE incident_expiration > UTC_TIMESTAMP() '
 
@@ -41,8 +41,9 @@ class DSPokemonGoMapIVMysql():
 					incident_expiration = datetime.strptime(str(row[2])[0:19], "%Y-%m-%d %H:%M:%S")
 					latitude = str(row[3])
 					longitude = str(row[4])
+					grunt_type = str(row[5])
 
-					poke = DSPokemon(pokestop_id, name, incident_expiration, latitude, longitude)
+					poke = DSPokemon(pokestop_id, name, incident_expiration, latitude, longitude, grunt_type)
 					pokelist.append(poke)
 		except pymysql.err.OperationalError as e:
 			if e.args[0] == 2006:
