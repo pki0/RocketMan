@@ -491,7 +491,7 @@ def checkAndSend(bot, chat_id, pokemon_db_data):
             grunt_type = pokestops.getGruntType()
             if grunt_type is None:
                 grunt_type = 0
-            grunt_forms = {0:"Unbekannt", 1:"Blance", 2:"Candela", 3:"Spark", 4:"Zufall", 5:"Zufall", 6:"Käfer", 7:"Käfer", 8:"Geist", 9:"Geist", 10:"Unlicht", 11:"Unlicht", 12:"Drache", 13:"Drache", 14:"Fee", 15:"Fee", 16:"Kampf", 17:"Kampf", 18:"Feuer", 19:"Feuer", 20:"Flug", 21:"Flug", 22:"Pflanze", 23:"Pflanze", 24:"Boden", 25:"Boden", 26:"Eis", 27:"Eis", 28:"Stahl", 29:"Stahl", 30:"Normal", 31:"Normal", 32:"Gift", 33:"Gift", 34:"Psycho", 35:"Psycho", 36:"Gestein", 37:"Gestein", 38:"Wasser", 39:"Wasser", 40:"Giovanni"}
+            grunt_forms = {0:"Unbekannt", 1:"Blance", 2:"Candela", 3:"Spark", 4:"Kanto Starter", 5:"Zufall", 6:"Käfer", 7:"Käfer", 8:"Geist", 9:"Geist", 10:"Unlicht", 11:"Unlicht", 12:"Drache", 13:"Drache", 14:"Fee", 15:"Fee", 16:"Kampf", 17:"Kampf", 18:"Feuer", 19:"Feuer", 20:"Flug", 21:"Flug", 22:"Pflanze", 23:"Pflanze", 24:"Boden", 25:"Boden", 26:"Eis", 27:"Eis", 28:"Stahl", 29:"Stahl", 30:"Normal", 31:"Normal", 32:"Gift", 33:"Gift", 34:"Psycho", 35:"Psycho", 36:"Gestein", 37:"Gestein", 38:"Wasser", 39:"Karpador", 41:"Cliff", 42:"Arlo", 43:"Sierra", 44:"Giovanni", 45:"Köder", 46:"Köder", 47:"Geist", 48:"Geist", 49:"Elektro", 50:"Elektro"}
 
             if user_send_venue == 0:
                 pstname = "*%s*" % (pokestop_name)
