@@ -26,6 +26,7 @@ class UserPreferencesModel(object):
             location = [None, None, None],
             language = 'de',
             user_send_venue = 1,
+            user_send_boss_only = 0,
         )
         return preferences
 

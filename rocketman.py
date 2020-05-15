@@ -91,6 +91,24 @@ def cmd_SwitchVenue(bot, update):
     logger.info('[%s@%s] Switched message style' % (userName, chat_id))
 
 
+def cmd_SwitchBossOnly(bot, update):
+
+    chat_id = update.message.chat_id
+    userName = update.message.from_user.username
+
+    # Lade User Einstellungen
+    pref = prefs.get(chat_id)
+
+    if pref['user_send_boss_only'] == 0:
+        pref.set('user_send_boss_only', 1)
+        bot.sendMessage(chat_id, text='Es werden nur noch Bosse gemeldet.')
+    else:
+        pref.set('user_send_boss_only', 0)
+        bot.sendMessage(chat_id, text='Es werden jetzt alle Rocket-Mitglieder gemeldet.')
+
+    logger.info('[%s@%s] Switched Bosses' % (userName, chat_id))
+
+
 def cmd_status(bot, update):
     chat_id = update.message.chat_id
     userName = update.message.from_user.username
@@ -103,11 +121,16 @@ def cmd_status(bot, update):
     lon = loc[1]
     radius = "Kein Radius"
 
+    boss = int(pref['user_send_boss_only'])
+    boss_active = "Nein"
+    if int(boss) == 1:
+        boss_active = "Ja"
+
     if lat is not None and loc[2] is not None:
         radius = float(loc[2])*1000
 
     prefmessage = "*Einstellungen:*\n" + \
-    "Standort: %s,%s\nRadius: %s m" % (lat, lon, radius)
+        "Standort: %s,%s\nRadius: %s m\nNur Bosse: %s" % (lat, lon, radius, boss_active)
 
     commandmessage = "/standort %s,%s\n/radius %s" % (lat, lon, radius)
 
@@ -467,6 +490,7 @@ def checkAndSend(bot, chat_id, pokemon_db_data):
         mySent = sent[chat_id]
         location_data = pref['location']
         user_send_venue = int(pref['user_send_venue'])
+        user_send_boss_only = int(pref['user_send_boss_only'])
 
         lock.acquire()
 
@@ -492,6 +516,10 @@ def checkAndSend(bot, chat_id, pokemon_db_data):
             if grunt_type is None:
                 grunt_type = 0
             grunt_forms = {0:"Unbekannt", 1:"Blance", 2:"Candela", 3:"Spark", 4:"Kanto Starter\u2642", 5:"Zufall\u2640", 6:"Käfer\u2640", 7:"Käfer\u2642", 8:"Geist\u2640", 9:"Geist\u2642", 10:"Unlicht\u2640", 11:"Unlicht\u2642", 12:"Drache\u2640", 13:"Drache\u2642", 14:"Fee\u2640", 15:"Fee\u2642", 16:"Kampf\u2640", 17:"Kampf\u2642", 18:"Feuer\u2640", 19:"Feuer\u2642", 20:"Flug\u2640", 21:"Flug\u2642", 22:"Pflanze\u2640", 23:"Pflanze\u2642", 24:"Boden\u2640", 25:"Boden\u2642", 26:"Eis\u2640", 27:"Eis\u2642", 28:"Stahl\u2640", 29:"Stahl\u2642", 30:"Normal\u2640", 31:"Normal\u2642", 32:"Gift\u2640", 33:"Gift\u2642", 34:"Psycho\u2640", 35:"Psycho\u2642", 36:"Gestein\u2640", 37:"Gestein\u2642", 38:"Wasser\u2640", 39:"Karpador\u2642", 41:"Cliff", 42:"Arlo", 43:"Sierra", 44:"Giovanni", 45:"Köder\u2642", 46:"Köder\u2640", 47:"Geist\u2640", 48:"Geist\u2642", 49:"Elektro\u2640", 50:"Elektro\u2642"}
+
+            if user_send_boss_only == 1:
+                if int(grunt_type) not in [41,42,43,44]:
+                    continue
 
             if user_send_venue == 0:
                 pstname = "*%s*" % (pokestop_name)
@@ -606,30 +634,32 @@ def ReadIncomingCommand(bot, update, args, job_queue):
 
     if Authenticated == 0:
         return
-
+    botname = '@GOKIELROCKETMANBOT'
     # Commands
     # Without args:
-    if IncomingCommand in ['/START']:
+    if IncomingCommand in ['/START', '/START' + botname]:
         cmd_start(bot, update, job_queue)
-    elif IncomingCommand in ['/STATUS']:
+    elif IncomingCommand in ['/STATUS', '/STATUS' + botname]:
         cmd_status(bot, update)
-    elif IncomingCommand in ['/NACHRICHT', '/MESSAGE']:
+    elif IncomingCommand in ['/NACHRICHT', '/MESSAGE', '/NACHRICHT' + botname, '/MESSAGE' + botname]:
         cmd_SwitchVenue(bot, update)
-    elif IncomingCommand in ['/HILFE', '/HELP']:
+    elif IncomingCommand in ['/HILFE', '/HELP', '/HILFE' + botname, '/HELP' + botname]:
         cmd_help(bot, update)
-    elif IncomingCommand in ['/SPEICHERN', '/SAVE']:
+    elif IncomingCommand in ['/SPEICHERN', '/SAVE', '/SPEICHERN' + botname, '/SAVE' + botname]:
         cmd_save(bot, update)
-    elif IncomingCommand in ['/ENDE', '/CLEAR']:
+    elif IncomingCommand in ['/ENDE', '/CLEAR', '/ENDE' + botname, '/CLEAR' + botname]:
         cmd_clear(bot, update)
+    elif IncomingCommand in ['/BOSSE', '/BOSS', '/BOSSE' + botname, '/BOSS' + botname]:
+        cmd_SwitchBossOnly(bot, update)
 
     # With args:
-    elif IncomingCommand in ['/RADIUS']:
+    elif IncomingCommand in ['/RADIUS', '/RADIUS' + botname]:
         cmd_radius(bot, update, args)
 
     # With job_queue
-    elif IncomingCommand in ['/LADEN', '/LOAD']:
+    elif IncomingCommand in ['/LADEN', '/LOAD', '/LADEN' + botname, '/LOAD' + botname]:
         cmd_load(bot, update, job_queue)
-    elif IncomingCommand in ['/STANDORT', '/LOCATION']:
+    elif IncomingCommand in ['/STANDORT', '/LOCATION', '/STANDORT' + botname, '/LOCATION' + botname]:
         cmd_location_str(bot, update, args, job_queue)
 
     else:
@@ -666,7 +696,8 @@ def main():
         'Speichern','Save',
         'Laden','Load',
         'Radius',
-        'Standort','Location']
+        'Standort','Location',
+        'Boss', 'Bosse']
 
     dp.add_handler(CommandHandler(AvailableCommands, ReadIncomingCommand, pass_args = True, pass_job_queue=True))
     dp.add_handler(MessageHandler(Filters.location, cmd_location))

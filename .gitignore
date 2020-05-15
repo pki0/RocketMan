@@ -1,0 +1,6 @@
+config-bot*
+userdata/**
+userdata_bak/**
+__pycache__/
+*.py[cod]
+*$py.class
